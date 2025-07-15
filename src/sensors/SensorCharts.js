@@ -24,7 +24,7 @@ ChartJS.register(
   Legend
 );
 
-const ESP_URL = "https://echo.free.beeceptor.com"
+const ESP_URL = "http://[ip]/data"
 
 
 function gaussianRandom(mean=0, stdev=1) {
@@ -55,9 +55,6 @@ function LiveChart(){
                 ]
             }
         ]
-        // borderColor: 'rgba(59, 142, 142, 1)',
-        // fill: false,
-        // tension: 0.1, // curve smoothness
     }
 
      const humidDataset = {
@@ -66,11 +63,11 @@ function LiveChart(){
             {
                 label: "Humidity",
                 data: humidData,
+                backgroundColor:[
+                    "rgba(229, 108, 43, 0.8)"
+                ]
             }
         ]
-        // borderColor: 'rgba(59, 142, 142, 1)',
-        // fill: false,
-        // tension: 0.1, // curve smoothness
     }
 
 
@@ -92,24 +89,27 @@ function LiveChart(){
     
     useEffect(()=>{
         const interval = setInterval(()=>{
-            // fetch(ESP_URL)
-            //     .then((response) => response.json())
-            //     .then((data) => {
+            fetch(ESP_URL)
+                .then((response) => response.json())
+                .then((data) => {
 
-            //     setTempData(prev => [...prev, data.temp].slice(-19));
-            //     setHumidData(prev => [...prev, data.humid].slice(-19));
-            // });
+                setTempData(prev => [...prev, data.temp].slice(-19));
+                setHumidData(prev => [...prev, data.humid].slice(-19));
+            }).catch(error => {
+                // Handle any errors that occurred during the fetch or in the .then() blocks
+                console.error('Fetch error:', error);
+            });
 
-            const data = getFakeData();
+            // const data = getFakeData();
 
-            setTempData(prev => [...prev, data.temp].slice(-19));
-            setHumidData(prev => [...prev, data.humid].slice(-19));
+            // setTempData(prev => [...prev, data.temp].slice(-19));
+            // setHumidData(prev => [...prev, data.humid].slice(-19));
             
             const now = new Date();
             const timeString = now.toLocaleTimeString('en-US', { hour12: false });
             setTimestamps(prev => [...prev, timeString].slice(-19));
 
-        }, 1000);
+        }, 3000);
 
         return ()=>clearInterval(interval);
     }, []);
